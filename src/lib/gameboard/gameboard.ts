@@ -1,10 +1,18 @@
 import { curry, isEqual, concat, floor, random, subtract, nth, filter  } from 'lodash';
 
-const largeNumbers = () => Array.from({ length: 4 }, (_, i) => Number((i + 1) * 25))
-const smallNumbers = () => Array.from({ length: 10 }, (_, i) => Number(i + 1))
+const largeNumbers = () => Array.from({ length: 4 }, (_, i) => ({ id: i, val: Number((i + 1) * 25)}))
+const smallNumbers = () => Array.from({ length: 10 }, (_, i) => ({ id: i, val: Number(i + 1)}))
 const TOTAL_NUMBERS = 6
 
 const equals = curry(isEqual);
+
+// enum NumberOptions {
+//   '1',
+//   '2',
+//   '3',
+//   '4',
+//   '0'
+// }
 
 export const buildBoard = (options: { large: number }) => {
   const selectedLargeNumbers = selectNumbers(largeNumbers(), options.large)

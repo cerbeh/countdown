@@ -1,4 +1,4 @@
-import timer from './'
+import { timer } from './'
 
 describe('test timer', () => {
   it('executes cb and finally hook', async () => {
@@ -11,6 +11,6 @@ describe('test timer', () => {
   })
 })
 
-async function delay(num) {
+async function delay(num: number) {
   return new Promise(resolve => setTimeout(resolve, num));
 }

@@ -1,25 +1,24 @@
 
-const Counter = num => {
+const Counter = (num: number) => {
   let counter = num;
   return {
-    add: toAdd => counter = counter + toAdd,
-    minus: toSubtract => counter = counter - toSubtract,
+    add: (toAdd: number) => counter = counter + toAdd,
+    minus: (toSubtract: number) => counter = counter - toSubtract,
     get count() {
       return counter;
     }
   };
 };
 
-const timer = (time, cb, onFinish) => {
+export const timer = (time: number, cb: (n: number) => void, onFinish: () => void): void => {
   const counter = Counter(time);
-  var WinnerCountdown = setInterval(function(){
+  const interval = setInterval(function(){
     counter.minus(1);
     cb(counter.count);
     if (counter.count === 0) {
-      clearInterval(WinnerCountdown);
+      clearInterval(interval);
       onFinish();
     }
   }, 1000);
 };
 
-export default timer

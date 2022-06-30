@@ -6,14 +6,6 @@ const TOTAL_NUMBERS = 6
 
 const equals = curry(isEqual);
 
-// enum NumberOptions {
-//   '1',
-//   '2',
-//   '3',
-//   '4',
-//   '0'
-// }
-
 export const buildBoard = (options: { large: number }) => {
   const selectedLargeNumbers = selectNumbers(largeNumbers(), options.large)
   const selectedSmallNumbers = selectNumbers(concat(smallNumbers(), smallNumbers()), TOTAL_NUMBERS - options.large)
@@ -22,6 +14,13 @@ export const buildBoard = (options: { large: number }) => {
     selectedSmallNumbers
   )
 }
+
+export type GameNumber = {
+  id: string
+  val: number
+}
+
+export type Gameboard = GameNumber[]
 
 const selectNumbers: any = (toChooseFrom: number[], quantity: number, selected = []) => {
 

@@ -13,7 +13,7 @@ const { Option } = Select
 
 
 function App() {
-  const [ largeNumbers, setLargeNumbers ] = useState<number>(2)
+  const [ largeNumbers, setLargeNumbers ] = useState<number>(0)
   const [ gameboard, setGameboard] = useState<GameNumber[]>([])
 
   const handleBoardCreation = () => {

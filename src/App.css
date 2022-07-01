@@ -19,6 +19,13 @@
 
 }
 
+.Tile {
+  padding: 4em 0em;
+  border:10px solid black;
+  font-size: medium;
+  color: black
+}
+
 .App-link {
   color: #61dafb;
 }

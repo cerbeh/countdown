@@ -1,10 +1,27 @@
 import { curry, isEqual, concat, floor, random, subtract, nth, filter, uniqueId  } from 'lodash';
 
 const TOTAL_NUMBERS = 6
+const LOWER_TARGET = 101
+const HIGHER_TARGET = 999
+
+enum Operator {
+  'add',
+  'minus',
+  'divide',
+  'multiply',
+}
+
+export type OperatorObj = {
+  id: string
+  val: Operator
+}
+
 export type GameNumber = {
   id: string
   val: number
 }
+
+const getOperators = () => Object.keys(Operator)
 
 export type Gameboard = GameNumber[]
 
@@ -28,7 +45,7 @@ const selectNumbers: any = (toChooseFrom: { id: string, val: number}[], quantity
     return selected
   }
 
-  const indexToChoose = floor(random(0, subtract(toChooseFrom.length, 1)))
+  const indexToChoose = random(0, subtract(toChooseFrom.length, 1))
   const num = nth(toChooseFrom, indexToChoose)
 
   return selectNumbers(
@@ -37,3 +54,6 @@ const selectNumbers: any = (toChooseFrom: { id: string, val: number}[], quantity
     concat(selected, num)
   )
 }
+
+export const generateTarget = () => random(LOWER_TARGET, HIGHER_TARGET)
+export const isGameLaunchReady = (num: number, gameboard: Gameboard) => gameboard.length === 6 && num > LOWER_TARGET && num < HIGHER_TARGET

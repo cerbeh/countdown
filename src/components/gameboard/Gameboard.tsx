@@ -1,13 +1,10 @@
+import { Col, Row } from 'antd'
+import { PropsWithChildren } from 'react'
 
-import { Layout, Col, Row } from 'antd'
-const { Header, Content, Sider } = Layout
-
-export function Gameboard({ tiles: ReactElement[] }) {
+export const GameboardWrapper: React.FC<PropsWithChildren> = (props) => {
   return (
-    <Content>
       <Row>
-        {tiles.map(tile => <Col span={4}>{tile}</Col>)}
+        {Array.isArray(props.children) && props.children.map((tile) => <Col span={4}>{tile}</Col>)}
       </Row>
-    </Content>
   )
 }

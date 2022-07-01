@@ -1,43 +1,50 @@
-import React, { useState } from 'react';
+import React, { ReactEventHandler, useState } from 'react';
 
 import './App.css';
 
-import { Typography, Layout, Button, Dropdown, Menu, Select, Progress } from 'antd'
+import { Typography, Layout, Button, Dropdown, Menu, Select, Progress, Space } from 'antd'
 import { Col, Row } from 'antd';
 import { buildBoard, GameNumber, Gameboard, generateTarget, isGameLaunchReady, OperatorObj } from './lib/gameboard'
 import { timer } from './lib/timer';
+import { Tile } from './components/tile';
+import { GameboardWrapper } from './components/gameboard';
 
+import { filter, uniqueId } from 'lodash';
 
 const { Title, Text } = Typography
 const { Header, Content, Sider } = Layout
 const { Option } = Select
 
-
 function App() {
-  const [largeNumbers, setLargeNumbers] = useState<number>(0)
   const [gameboard, setGameboard] = useState<GameNumber[]>([])
   const [gameInProgress, setInProgress] = useState(false)
   const [timeRemaining, setTimeRemaining] = useState(30)
   const [target, setTarget] = useState(0)
-  const [ equation, setEquation ] = useState<(GameNumber | OperatorObj)[]>([])
+  const [equation, setEquation] = useState<(GameNumber | OperatorObj)[]>([])
 
-  const handleBoardCreation = () => {
+  const handleBoardCreation = (largeNumbers: number) => {
     const newGameboard = buildBoard({ large: largeNumbers })
     setGameboard(newGameboard)
   }
 
   const startGame = () => {
-    setInProgress(!gameInProgress)
-    timer(timeRemaining, setTimeRemaining, () => {
-      setInProgress(false)
-      setTimeRemaining(30)
-    })
+    setInProgress(true)
+    timer(
+      timeRemaining,
+      setTimeRemaining,
+      () => {
+        setInProgress(false)
+        setTimeRemaining(30)
+      })
   }
 
-  const handleTileClick = (event) => {
-    const { val } = event?.target
-    setEquation((oldArray) => [...oldArray, num])
+  const filterEquationVal = (tile: (GameNumber | OperatorObj)) => {
+    const newEquation = filter(equation, e => e.id !== tile.id)
+    setEquation(newEquation)
   }
+  const handleTileClick = (tile: (GameNumber | OperatorObj)) => setEquation((oldArray) => [...oldArray, tile])
+
+  const optionCopy = (num: number) => `${num} Large - ${6 - num} Small`
 
   return (
     <div className="App">
@@ -48,24 +55,29 @@ function App() {
 
         <Layout>
           <Content>
-            <Row>
-              {gameboard.map(({ val, id }) =>
-                <Col key={id} span={4}>
-                  <div onClick={(event) => setEquation((oldArray) => [...oldArray, event.target])} typeof='button' className='Tile'>
-                    {val}
-                  </div>
-                </Col>)}
+            <GameboardWrapper>
+              {gameboard.map((tile) => <Tile key={tile.id} tile={tile} clickHandler={handleTileClick} />)}
+            </GameboardWrapper>
+
+            <Row justify='center'>
+              {equation.map(e =>
+                <Col span={6}>
+                  <Tile key={e.id} tile={e} clickHandler={filterEquationVal} />
+                </Col>
+              )}
             </Row>
-            <Row>
-              {[].map(() => <Col></Col>)}
+            <Row justify='space-between'>
+              {equation.map(e =>
+                <Col span={6}>
+                  <Tile key={e.id} tile={e} clickHandler={filterEquationVal} />
+                </Col>
+              )}
             </Row>
           </Content>
+
           <Sider>
-            <Button disabled={gameInProgress} onClick={handleBoardCreation}>Generate Board</Button>
-            <Button disabled={gameInProgress} onClick={() => setTarget(generateTarget())}>Generate Target</Button>
-            <Select disabled={gameInProgress} defaultValue={0} onChange={setLargeNumbers}>
-              {Array.from({ length: 5 }, (_, i) => <Option value={i} children={undefined}></Option>)}
-            </Select>
+            {!gameInProgress && Array.from({ length: 5 }, (_, i) => <Button onClick={() => handleBoardCreation(i)} value={i}>{optionCopy(i)}</Button>)}
+            {!gameInProgress && <Button onClick={() => setTarget(generateTarget())}>Generate Target</Button>}
 
             <Button disabled={!isGameLaunchReady(target, gameboard) || gameInProgress} onClick={startGame}>{gameInProgress ? 'In progress' : 'Start'}</Button>
             {gameInProgress &&

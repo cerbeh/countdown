@@ -1,10 +1,13 @@
-import React from "react";
+import './Tile.css';
+import { GameNumber, OperatorObj } from '../../lib/gameboard'
 
-type TileProps = {
-    value: number,
-    selected: boolean
+export type TileProps = {
+    tile: (GameNumber | OperatorObj),
+    selected?: boolean,
+    temporary?: boolean,
+    clickHandler: (tile: (GameNumber | OperatorObj)) => void
 }
 
-export const Tile = (props: TileProps) => <div>
-    { props.value }
+export const Tile = (props: TileProps) => <div onClick={() => props.clickHandler(props.tile)} className='Tile'>
+    {props.tile.val}
 </div>

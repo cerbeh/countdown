@@ -4,7 +4,9 @@ const lookup = { add, subtract, multiply, divide }
 const curriedGet = curry(get)
 const lookupOperator = curriedGet(lookup);
 
-export const equation = ([a, b, op]: [number, number, string]): number => {
+type equation = [number, string, number]
+
+export const equation = ([left, op, right]: equation): number => {
   const operatorFn = lookupOperator(op)
-  return operatorFn(a, b)
+  return operatorFn(left, right)
 }

@@ -9,7 +9,7 @@ import { timer } from './lib/timer';
 import { Tile } from './components/tile';
 import { GameboardWrapper } from './components/gameboard';
 
-import { filter, uniqueId } from 'lodash';
+import { filter, uniqueId, isNil } from 'lodash';
 
 const { Title, Text } = Typography
 const { Header, Content, Sider } = Layout
@@ -56,22 +56,13 @@ function App() {
         <Layout>
           <Content>
             <GameboardWrapper>
-              {gameboard.map((tile) => <Tile key={tile.id} tile={tile} clickHandler={handleTileClick} />)}
+              {gameboard.map((tile) => <Tile<GameNumber> key={tile.id} tile={tile} clickHandler={handleTileClick} />)}
             </GameboardWrapper>
 
             <Row justify='center'>
-              {equation.map(e =>
-                <Col span={6}>
+                { !isNil(equation.left) && <Col span={6}>
                   <Tile key={e.id} tile={e} clickHandler={filterEquationVal} />
-                </Col>
-              )}
-            </Row>
-            <Row justify='space-between'>
-              {equation.map(e =>
-                <Col span={6}>
-                  <Tile key={e.id} tile={e} clickHandler={filterEquationVal} />
-                </Col>
-              )}
+                </Col> }
             </Row>
           </Content>
 

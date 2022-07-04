@@ -1,16 +1,12 @@
 import { add, subtract, multiply, divide, get, curry } from 'lodash';
-import { EquationObj } from '../types';
+import { EquationObj, Operator } from '../types';
 
-const lookup = { add, subtract, multiply, divide }
-const curriedGet = curry(get)
-const lookupOperator = curriedGet(lookup);
-
-
+const operatorLookup = { add, subtract, multiply, divide }
 
 export const equation = ({ left, op, right }: EquationObj): number => {
   if ([left, op, right].some(e => e === null)) {
     return 0; // Wants to be null but need to check typing of EquationObj
   }
-  const operatorFn = lookupOperator(op)
-  return operatorFn(left, right)
+  const operatorFn = get(operatorLookup, op)
+  return operatorFn(left.val, right.val)
 }

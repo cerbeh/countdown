@@ -5,10 +5,10 @@ export type EquationObj = {
 }
 
 export enum Operator {
-    'add',
-    'subtract',
-    'divide',
-    'multiply',
+    ADD = 'add',
+    SUBTRACT = 'subtract',
+    DIVIDE = 'divide',
+    MULTIPLY = 'multiply',
 }
 
 export type OperatorObj = {

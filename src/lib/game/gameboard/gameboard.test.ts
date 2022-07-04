@@ -1,4 +1,5 @@
-import { buildBoard, GameNumber, isGameLaunchReady } from '.'
+import { buildBoard, isGameLaunchReady } from '.'
+import { GameNumber } from '../types'
 import _ from 'lodash'
 
 describe('Gameboard', () => {

@@ -4,23 +4,24 @@ import './App.css';
 
 import { Typography, Layout, Button, Dropdown, Menu, Select, Progress, Space } from 'antd'
 import { Col, Row } from 'antd';
-import { buildBoard, GameNumber, Gameboard, generateTarget, isGameLaunchReady, OperatorObj } from './lib/gameboard'
+import { buildBoard, generateTarget, isGameLaunchReady } from './lib/game/gameboard'
+import { GameNumber, OperatorObj, EquationObj } from './lib/game/types';
 import { timer } from './lib/timer';
-import { Tile } from './components/tile';
+
 import { GameboardWrapper } from './components/gameboard';
+import { Tile } from './components/tile';
 
 import { filter, uniqueId, isNil } from 'lodash';
 
-const { Title, Text } = Typography
+const { Title } = Typography
 const { Header, Content, Sider } = Layout
-const { Option } = Select
 
 function App() {
   const [gameboard, setGameboard] = useState<GameNumber[]>([])
   const [gameInProgress, setInProgress] = useState(false)
   const [timeRemaining, setTimeRemaining] = useState(30)
   const [target, setTarget] = useState(0)
-  const [equation, setEquation] = useState<(GameNumber | OperatorObj)[]>([])
+  const [equation, setEquation] = useState<EquationObj>({} as EquationObj)
 
   const handleBoardCreation = (largeNumbers: number) => {
     const newGameboard = buildBoard({ large: largeNumbers })
@@ -38,11 +39,11 @@ function App() {
       })
   }
 
-  const filterEquationVal = (tile: (GameNumber | OperatorObj)) => {
-    const newEquation = filter(equation, e => e.id !== tile.id)
-    setEquation(newEquation)
+  const removeValueFromEquation = (position: string) => {
+    setEquation({ ...equation, [position]: null })
   }
-  const handleTileClick = (tile: (GameNumber | OperatorObj)) => setEquation((oldArray) => [...oldArray, tile])
+
+  const addTile = (tile: (GameNumber | OperatorObj), position: string) => setEquation((old: EquationObj) => ({ ...old, [position]: tile }))
 
   const optionCopy = (num: number) => `${num} Large - ${6 - num} Small`
 
@@ -56,13 +57,15 @@ function App() {
         <Layout>
           <Content>
             <GameboardWrapper>
-              {gameboard.map((tile) => <Tile<GameNumber> key={tile.id} tile={tile} clickHandler={handleTileClick} />)}
+              {gameboard.map((tile) => <Tile key={tile.id} tile={tile} clickHandler={(tile) => addTile(tile, equation.left ? 'right' : 'left' )} />)}
             </GameboardWrapper>
 
             <Row justify='center'>
-                { !isNil(equation.left) && <Col span={6}>
-                  <Tile key={e.id} tile={e} clickHandler={filterEquationVal} />
-                </Col> }
+              {!isNil(equation.left) &&
+                <Col span={6}>
+                  <Tile key={equation.left.id} tile={equation.left} clickHandler={() => removeValueFromEquation('left')} />
+                </Col>
+              }
             </Row>
           </Content>
 

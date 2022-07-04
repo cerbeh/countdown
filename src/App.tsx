@@ -11,7 +11,8 @@ import { timer } from './lib/timer';
 import { GameboardWrapper } from './components/gameboard';
 import { Tile } from './components/tile';
 
-import { filter, uniqueId, isNil } from 'lodash';
+import { isNil } from 'lodash';
+// import { getOperators } from './lib/game/arithmetic';
 
 const { Title } = Typography
 const { Header, Content, Sider } = Layout
@@ -60,10 +61,28 @@ function App() {
               {gameboard.map((tile) => <Tile key={tile.id} tile={tile} clickHandler={(tile) => addTile(tile, equation.left ? 'right' : 'left' )} />)}
             </GameboardWrapper>
 
+            {/* <Row>
+              {gameInProgress &&
+              getOperators().map(tile => <Col span={6}>
+                <Tile tile={tile} key={tile.id} />
+              </Col>)
+              }
+            </Row> */}
+
             <Row justify='center'>
               {!isNil(equation.left) &&
                 <Col span={6}>
                   <Tile key={equation.left.id} tile={equation.left} clickHandler={() => removeValueFromEquation('left')} />
+                </Col>
+              }
+              {!isNil(equation.op) &&
+                <Col span={6}>
+                  <Tile key={equation.left.id} tile={equation.op} clickHandler={() => removeValueFromEquation('op')} />
+                </Col>
+              }
+              {!isNil(equation.right) &&
+                <Col span={6}>
+                  <Tile key={equation.right.id} tile={equation.right} clickHandler={() => removeValueFromEquation('right')} />
                 </Col>
               }
             </Row>

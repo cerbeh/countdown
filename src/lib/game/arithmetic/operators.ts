@@ -1,5 +1,5 @@
-import { add, subtract, multiply, divide, get, curry } from 'lodash';
-import { EquationObj, Operator } from '../types';
+import { add, subtract, multiply, divide, get, curry, uniqueId } from 'lodash';
+import { EquationObj, Operator, OperatorObj } from '../types';
 
 const operatorLookup = { add, subtract, multiply, divide }
 
@@ -10,3 +10,5 @@ export const equation = ({ left, op, right }: EquationObj): number => {
   const operatorFn = get(operatorLookup, op)
   return operatorFn(left.val, right.val)
 }
+
+// export const getOperators: OperatorObj[] = () => Object.values(Operator).map(op => ({ val: op, id: uniqueId }))

@@ -16,7 +16,7 @@ export type OperatorObj = {
     val: Operator
 }
 
-export type ResultGameNumber = {
+export type CalculatedGameNumber = {
     id: string
     val: number
     left: GameNumber
@@ -29,6 +29,6 @@ export type PrimitiveGameNumber = {
   val: number
 }
 
-export type GameNumber = PrimitiveGameNumber | ResultGameNumber
+export type GameNumber = PrimitiveGameNumber | CalculatedGameNumber
 
 export type Gameboard = GameNumber[]

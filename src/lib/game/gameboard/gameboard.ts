@@ -1,14 +1,14 @@
-import { curry, isEqual, concat, floor, random, subtract, nth, filter, uniqueId  } from 'lodash';
-import { Operator, Gameboard } from '../types'
+import { isEqual, concat, random, subtract, nth, filter, uniqueId, reduce } from 'lodash';
+import { executeEquation } from '../arithmetic';
+import { Operator, Gameboard, EquationObj, PrimitiveGameNumber, GameNumber, CalculatedGameNumber } from '../types'
 const TOTAL_NUMBERS = 6
 const LOWER_TARGET = 101
 const HIGHER_TARGET = 999
 
 const getOperators = () => Object.keys(Operator)
 
-const largeNumbers = () => Array.from({ length: 4 }, (_, i) => ({ id: uniqueId('large'), val: Number((i + 1) * 25)}))
-const smallNumbers = () => Array.from({ length: 10 }, (_, i) => ({ id: uniqueId('small'), val: Number(i + 1)}))
-const equals = curry(isEqual);
+const largeNumbers = (): PrimitiveGameNumber[] => Array.from({ length: 4 }, (_, i) => createPrimitiveNumber(Number((i + 1) * 25), 'primitive'))
+const smallNumbers = (): PrimitiveGameNumber[] => Array.from({ length: 10 }, (_, i) => ({ id: uniqueId('primitive'), val: Number(i + 1) }))
 
 export const buildBoard = (options: { large: number }) => {
   const selectedLargeNumbers = selectNumbers(largeNumbers(), options.large)
@@ -20,9 +20,9 @@ export const buildBoard = (options: { large: number }) => {
   )
 }
 
-const selectNumbers: any = (toChooseFrom: { id: string, val: number}[], quantity: number, selected = []) => {
+const selectNumbers: any = (toChooseFrom: { id: string, val: number }[], quantity: number, selected = []) => {
 
-  if (quantity === 0){
+  if (quantity === 0) {
     return selected
   }
 
@@ -38,3 +38,44 @@ const selectNumbers: any = (toChooseFrom: { id: string, val: number}[], quantity
 
 export const generateTarget = () => random(LOWER_TARGET, HIGHER_TARGET)
 export const isGameLaunchReady = (num: number, gameboard: Gameboard) => gameboard.length === 6 && num > LOWER_TARGET && num < HIGHER_TARGET
+
+export const fold = ({ left, op, right }: EquationObj): CalculatedGameNumber => ({
+  id: uniqueId('calculated'),
+  val: executeEquation({ left, right, op }),
+  operator: op,
+  left,
+  right,
+})
+
+export const unfold = (num: CalculatedGameNumber): GameNumber[] => [num.left, num.right]
+
+export const unfoldAll = (nums: Gameboard): Gameboard => {
+
+  const allPrimitive = nums.every(isPrimitiveNumber)
+
+  if (allPrimitive) {
+    return nums
+  }
+  const unfoldedNums = reduce(nums, unfoldReducer, [])
+  return unfoldAll(unfoldedNums)
+}
+
+const unfoldReducer = (numbers: Gameboard, currentNumber: GameNumber): Gameboard => {
+  return concat(
+    [] as Gameboard,
+    numbers,
+    isCalculatedNumber(currentNumber) ? unfold(currentNumber as CalculatedGameNumber) : currentNumber
+  )
+}
+
+const createPrimitiveNumber = (num: number, id_prefix: string): PrimitiveGameNumber => ({
+  id: uniqueId(id_prefix),
+  val: num,
+})
+
+function isPrimitiveNumber(number: GameNumber) {
+  return (number as PrimitiveGameNumber).id.includes('primitive')
+}
+function isCalculatedNumber(number: GameNumber) {
+  return (number as CalculatedGameNumber).id.includes('calculated')
+}

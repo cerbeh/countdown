@@ -1,15 +1,19 @@
 @import 'antd/dist/antd.min.css';
 @import url('https://fonts.googleapis.com/css2?family=Fira+Sans&display=swap');
 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 .App {
-  background-color: rgb(8,18,90);
+  background-color: rgb(8, 18, 90);
   text-align: center;
   font-family: 'Fira Sans', sans-serif;
-  color: rgba(240,240,237,255);
+  color: rgba(240, 240, 237, 255);
 }
 
 .App-header {
-  background-color: rgb(28,96,202);
+  background-color: rgb(28, 96, 202);
   min-height: 20vh;
   display: flex;
   flex-direction: column;

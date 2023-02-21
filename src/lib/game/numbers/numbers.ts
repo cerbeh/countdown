@@ -1,44 +1,50 @@
 import { isEqual, concat, random, subtract, nth, filter, uniqueId, reduce } from 'lodash';
 import { executeEquation } from '../arithmetic';
-import { Board, EquationObj, PrimitiveGameNumber, GameNumber, CalculatedGameNumber, Operator } from '../types'
-const TOTAL_NUMBERS = 6
+import { Operator, Board, EquationObj, PrimitiveGameNumber, GameNumber, CalculatedGameNumber } from '../types'
+
+declare const TOTAL_NUMBERS = 6
 const LOWER_TARGET = 101
 const HIGHER_TARGET = 999
 
-export type Difficulty = 0 | 1 | 2 | 3 | 4
-
 const getOperators = () => Object.keys(Operator)
 
-const largeNumbers = (): PrimitiveGameNumber[] => Array.from({ length: 4 }, (_, i) => createPrimitiveNumber(Number((i + 1) * 25), 'primitive'))
-const smallNumbers = (): PrimitiveGameNumber[] => Array.from({ length: 10 }, (_, i) => ({ id: uniqueId('primitive'), val: Number(i + 1) }))
+const createNumbersArray = (length: number, indexMutator: (n: number) => number): PrimitiveGameNumber[] => Array.from({ length }, (_, i) => createPrimitiveNumber(indexMutator(i), 'primitive'))
+
+const largeNumberRange = (): PrimitiveGameNumber[] => createNumbersArray(4, i => Number((i + 1) * 25))
+const smallNumberRange = (): PrimitiveGameNumber[] => createNumbersArray(10, i => Number(i + 1))
 
 export const buildBoard = (options: { large: number }) => {
-  const selectedLargeNumbers = selectNumbers(largeNumbers(), options.large)
-  const selectedSmallNumbers = selectNumbers(concat(smallNumbers(), smallNumbers()), TOTAL_NUMBERS - options.large)
+  const largeNumbers = selectNumbers(largeNumberRange(), options.large)
+  const smallNumbers = selectNumbers(concat(smallNumberRange(), smallNumberRange()), TOTAL_NUMBERS - options.large)
 
   return concat(
-    selectedLargeNumbers,
-    selectedSmallNumbers
+    largeNumbers as { id: string, val: number }[],
+    smallNumbers as { id: string, val: number }[]
   )
 }
 
-const selectNumbers: any = (toChooseFrom: { id: string, val: number }[], quantity: number, selected = []) => {
+type NumberSelectorRecursive = (numbers: { id: string, val: number }[], quantity: number, selected?: { id: string, val: number }[]) => { id: string, val: number }[] | NumberSelectorRecursive
+const selectNumbers: NumberSelectorRecursive = (numbers: { id: string, val: number }[], quantity: number, selected: { id: string, val: number }[] = []) => {
 
   if (quantity === 0) {
     return selected
   }
 
-  const indexToChoose = random(0, subtract(toChooseFrom.length, 1))
-  const num = nth(toChooseFrom, indexToChoose)
+  const indexToChoose = random(0, subtract(numbers.length, 1))
+  const num = nth(numbers, indexToChoose)
+
+  if (!num) {
+    return selected
+  }
 
   return selectNumbers(
-    filter(toChooseFrom, e => !isEqual(num?.id, e.id)),
+    filter(numbers, e => !isEqual(num?.id, e.id)),
     quantity - 1,
-    concat(selected, num)
+    concat<{ id: string, val: number }>(selected, num)
   )
 }
 
-export const generateTarget = () => random(LOWER_TARGET, HIGHER_TARGET)
+export const randomTarget = () => random(LOWER_TARGET, HIGHER_TARGET)
 export const isGameLaunchReady = (num: number, gameboard: Board) => gameboard.length === 6 && num > LOWER_TARGET && num < HIGHER_TARGET
 
 export const fold = ({ left, op, right }: EquationObj): CalculatedGameNumber => ({
@@ -61,6 +67,10 @@ export const unfoldAll = (nums: Board): Board => {
   const unfoldedNums = reduce(nums, unfoldReducer, [])
   return unfoldAll(unfoldedNums)
 }
+
+// function unfoldAll(toUnfold: T): T {
+
+// }
 
 const unfoldReducer = (numbers: Board, currentNumber: GameNumber): Board => {
   return concat(

@@ -1,27 +1,28 @@
 export type EquationObj = {
-    left: GameNumber
-    op: Operator
-    right: GameNumber
+  left: GameNumber
+  op: Operator
+  right: GameNumber
 }
 
 export enum Operator {
-    ADD = 'add',
-    SUBTRACT = 'subtract',
-    DIVIDE = 'divide',
-    MULTIPLY = 'multiply',
+  ADD = 'add',
+  SUBTRACT = 'subtract',
+  DIVIDE = 'divide',
+  MULTIPLY = 'multiply',
 }
 
 export type OperatorObj = {
-    id: string
-    val: Operator
+  id: string
+  val: Operator
+  symbol: string
 }
 
 export type CalculatedGameNumber = {
-    id: string
-    val: number
-    left: GameNumber
-    right: GameNumber
-    operator: Operator
+  id: string
+  val: number
+  left: GameNumber
+  right: GameNumber
+  operator: Operator
 }
 
 export type PrimitiveGameNumber = {
@@ -31,4 +32,4 @@ export type PrimitiveGameNumber = {
 
 export type GameNumber = PrimitiveGameNumber | CalculatedGameNumber
 
-export type Gameboard = GameNumber[]
+export type Board = GameNumber[]

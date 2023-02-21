@@ -1,5 +1,5 @@
 import { Difficulty, buildBoard } from "../lib/game/gameboard";
-import { Board as Gameboard, OperatorObj } from "../lib/game/types";
+import { Board as Gameboard } from "../lib/game/types";
 import { makeAutoObservable } from "mobx";
 import { Equation } from "./equation";
 import { TimerStore } from "./timer";

@@ -1,8 +1,4 @@
-import { useState } from 'react'
 import { Layout, Typography } from 'antd'
-
-import { generateTarget, isGameLaunchReady } from '../lib/game/gameboard'
-import { GameNumber } from '../lib/game/types';
 import { GameSidebar } from './GameSidebar';
 import { Gameboard } from './Gameboard';
 import { useStore } from '../store/context';

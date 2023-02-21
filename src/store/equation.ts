@@ -27,4 +27,7 @@ export class Equation {
   get isReady() {
     return [this.left, this.right, this.op].every(e => e !== undefined)
   }
+  get isDirty() {
+    return [this.left, this.right, this.op].some(e => e !== undefined)
+  }
 }
